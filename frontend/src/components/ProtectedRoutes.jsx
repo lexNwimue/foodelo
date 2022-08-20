@@ -1,27 +1,32 @@
-import { useNavigate, Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { verifyUser } from "../utils/auth";
-// import { useRef } from "react";
-import { useEffect, useState } from "react";
+import { useRef } from "react";
+import { useEffect } from "react";
+// import Login from "./Login";
 
 const ProtectedRoutes = () => {
   const navigate = useNavigate();
-  const [status, setStatus] = useState(false);
-  console.log("userStatus before useEffect", status);
-  const sideEffect = async () => {
-    const response = await verifyUser();
-    if (response === false) {
-      navigate("/login");
-      return;
-    }
-    setStatus(response);
-  };
+
+  let userStatus = useRef(false);
+  console.log("userStatus before useEffect", userStatus);
 
   useEffect(() => {
+    const sideEffect = async () => {
+      const response = await verifyUser();
+      console.log("Verify User Response: ", response);
+      if (response) {
+        userStatus.current = response;
+      } else {
+        userStatus.current = false;
+        navigate("/login");
+        return;
+      }
+    };
     sideEffect();
-    console.log("userStatus after useEffect", status);
+    console.log("userStatus after useEffect", userStatus);
   });
 
-  return status && <Outlet />; // This component was no longer in control
+  return userStatus ? <Outlet /> : <div>Loading. . . </div>;
 };
 
 export default ProtectedRoutes;

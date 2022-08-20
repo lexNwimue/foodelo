@@ -3,9 +3,8 @@ const verifyUser = async () => {
   response = await response.json();
   if (response.success) {
     return true;
-  } else {
-    return false;
   }
+  return false;
 };
 
 export { verifyUser };

@@ -1,25 +1,25 @@
 import express from "express";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
-// import cors from "cors";
-import upload from "express-fileupload";
-import { signup_post, login_post, logout, verify_user } from "./controller.mjs";
+import {
+  signup_post,
+  login_post,
+  verify_user,
+  add_to_cart,
+  viewCart,
+  deleteFromCart,
+  logout,
+} from "./controller.mjs";
 
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(upload());
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000",
-//   })
-// );
 app.use(cookieParser());
 
 // Connect to MongoDB
 
-const dbURI = "mongodb://localhost/iDev_reg_and_login_task_db";
+const dbURI = "mongodb://localhost/foodeloDB";
 mongoose
   .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((result) => {
@@ -30,8 +30,11 @@ mongoose
 
 app.post("/signup", signup_post);
 app.post("/login", login_post);
-app.get("/logout", logout);
 app.get("/dashboard", verify_user);
+app.post("/cart", add_to_cart);
+app.get("/cart", viewCart);
+app.delete("/cart", deleteFromCart);
+app.get("/logout", logout);
 app.all("*", (req, res) => {
-  res.json({ err: "404 - Not Found" });
+  res.json({ err: "Invalid URL" });
 });
